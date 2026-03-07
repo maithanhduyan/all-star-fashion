@@ -1,6 +1,7 @@
 // lib/services/auth.service.ts — Authentication & session management
 import { query, queryOne, execute } from "../../db/client.ts";
-import { hash, compare } from "bcrypt";
+import bcrypt from "bcrypt";
+const { hash, compare: compareHash } = bcrypt;
 
 export interface UserResponse {
   id: string;
@@ -94,7 +95,7 @@ export async function login(input: {
     );
   }
 
-  const valid = await compare(input.password, user.password_hash);
+  const valid = await compareHash(input.password, user.password_hash);
   if (!valid) {
     throw new AuthError(
       "Email hoặc mật khẩu không đúng",

@@ -5,12 +5,14 @@ let _pool: Pool | null = null;
 
 function getPool(): Pool {
   if (!_pool) {
+    const sslEnabled = Deno.env.get("DATABASE_SSL") === "true";
     _pool = new Pool({
       hostname: Deno.env.get("DATABASE_HOST") || "localhost",
       port: Number(Deno.env.get("DATABASE_PORT")) || 5432,
       database: Deno.env.get("DATABASE_NAME") || "allstar_fashion",
       user: Deno.env.get("DATABASE_USER") || "allstar",
       password: Deno.env.get("DATABASE_PASSWORD") || "",
+      tls: { enabled: sslEnabled, enforce: false },
     }, 10);
   }
   return _pool;

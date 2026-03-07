@@ -2,7 +2,8 @@
 import "$std/dotenv/load.ts";
 import { pool } from "./client.ts";
 import { categories, products } from "../lib/data.ts";
-import { hash } from "bcrypt";
+import bcrypt from "bcrypt";
+const { hash } = bcrypt;
 
 async function seed(): Promise<void> {
   console.log("🌱 Seeding database...\n");

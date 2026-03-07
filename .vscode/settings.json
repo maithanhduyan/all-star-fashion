@@ -42,6 +42,16 @@
         "docker build": true,
         "ForEach-Object": true,
         "Start-Process": true,
-        "Get-Process": true
+        "Get-Process": true,
+        "Client": true,
+        "const": true,
+        "console.log('Connecting": true,
+        "await": true,
+        "console.log('OK:',": true,
+        "Test-NetConnection": true,
+        "hostname:": true,
+        "enabled:": true,
+        "Resolve-DnsName": true,
+        "nslookup": true
     }
 }
