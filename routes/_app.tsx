@@ -15,7 +15,7 @@ export default function App({ Component, state }: PageProps<unknown, AppState>) 
         />
         {/* Favicon */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="/favicon.svg" />
         {/* Open Graph / SEO */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content="All Star Fashion - Thời Trang Cao Cấp" />

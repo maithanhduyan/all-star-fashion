@@ -1,36 +1,25 @@
 import { useState, useEffect, useRef } from "preact/hooks";
-
-interface CartItem {
-  product: { id: string; name: string; slug: string; price: number; images: string[] };
-  size: string;
-  color: string;
-  quantity: number;
-}
-
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
-}
+import { type CartItemData, getCart, clearCart, formatPrice, getCartTotal } from "../lib/cart.ts";
 
 export default function CheckoutForm() {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItemData[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("allstar_cart");
-      if (stored) setCart(JSON.parse(stored));
-    } catch { /* empty cart */ }
+    setCart(getCart());
+    setLoaded(true);
   }, []);
 
-  const subtotal = cart.reduce((s, i) => s + i.product.price * i.quantity, 0);
+  const subtotal = getCartTotal(cart);
   const shippingFee = subtotal >= 1000000 ? 0 : 30000;
   const total = subtotal + shippingFee;
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
-    if (cart.length === 0 || submitting) return;
+    if (!loaded || cart.length === 0 || submitting) return;
 
     setSubmitting(true);
     setError("");
@@ -48,7 +37,7 @@ export default function CheckoutForm() {
       note: fd.get("note") as string || "",
       paymentMethod: "cod" as const,
       items: cart.map((i) => ({
-        productId: i.product.id,
+        productId: i.productId,
         size: i.size,
         color: i.color,
         quantity: i.quantity,
@@ -71,7 +60,7 @@ export default function CheckoutForm() {
       }
 
       // Clear cart & redirect
-      localStorage.removeItem("allstar_cart");
+      clearCart();
       globalThis.dispatchEvent(new CustomEvent("cart-updated"));
       globalThis.location.href = `/order-success?id=${data.order.id}`;
     } catch {
@@ -79,6 +68,14 @@ export default function CheckoutForm() {
       setSubmitting(false);
     }
   };
+
+  if (!loaded) {
+    return (
+      <div class="text-center py-20">
+        <div class="w-8 h-8 border-2 border-brand-black border-t-transparent rounded-full animate-spin mx-auto" />
+      </div>
+    );
+  }
 
   if (cart.length === 0) {
     return (
@@ -204,17 +201,17 @@ export default function CheckoutForm() {
               <div key={idx} class="flex gap-4">
                 <div class="w-16 h-20 bg-white flex-shrink-0 overflow-hidden">
                   <img
-                    src={item.product.images[0]}
-                    alt={item.product.name}
+                    src={item.image}
+                    alt={item.productName}
                     class="w-full h-full object-cover"
                   />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium truncate">{item.product.name}</p>
+                  <p class="text-sm font-medium truncate">{item.productName}</p>
                   <p class="text-xs text-brand-gray mt-0.5">
                     {item.size} / {item.color} × {item.quantity}
                   </p>
-                  <p class="text-sm mt-1">{formatPrice(item.product.price * item.quantity)}</p>
+                  <p class="text-sm mt-1">{formatPrice(item.price * item.quantity)}</p>
                 </div>
               </div>
             ))}
