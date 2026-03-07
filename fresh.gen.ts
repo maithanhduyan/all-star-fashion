@@ -9,6 +9,7 @@ import * as $about from "./routes/about.tsx";
 import * as $account_middleware from "./routes/account/_middleware.ts";
 import * as $account_index from "./routes/account/index.tsx";
 import * as $account_orders from "./routes/account/orders.tsx";
+import * as $account_orders_id_ from "./routes/account/orders/[id].tsx";
 import * as $admin_middleware from "./routes/admin/_middleware.ts";
 import * as $admin_index from "./routes/admin/index.tsx";
 import * as $admin_invoices from "./routes/admin/invoices.tsx";
@@ -16,6 +17,9 @@ import * as $admin_orders from "./routes/admin/orders.tsx";
 import * as $admin_products from "./routes/admin/products.tsx";
 import * as $admin_reports from "./routes/admin/reports.tsx";
 import * as $api_middleware from "./routes/api/_middleware.ts";
+import * as $api_account_addresses_id_ from "./routes/api/account/addresses/[id].ts";
+import * as $api_account_addresses_index from "./routes/api/account/addresses/index.ts";
+import * as $api_account_profile from "./routes/api/account/profile.ts";
 import * as $api_admin_invoices_index from "./routes/api/admin/invoices/index.ts";
 import * as $api_admin_orders_id_index from "./routes/api/admin/orders/[id]/index.ts";
 import * as $api_admin_orders_id_invoice from "./routes/api/admin/orders/[id]/invoice.ts";
@@ -42,6 +46,7 @@ import * as $index from "./routes/index.tsx";
 import * as $order_success from "./routes/order-success.tsx";
 import * as $shop_slug_ from "./routes/shop/[slug].tsx";
 import * as $shop_index from "./routes/shop/index.tsx";
+import * as $AccountProfile from "./islands/AccountProfile.tsx";
 import * as $AddToCart from "./islands/AddToCart.tsx";
 import * as $AdminInvoiceList from "./islands/AdminInvoiceList.tsx";
 import * as $AdminOrderActions from "./islands/AdminOrderActions.tsx";
@@ -73,6 +78,7 @@ const manifest = {
     "./routes/account/_middleware.ts": $account_middleware,
     "./routes/account/index.tsx": $account_index,
     "./routes/account/orders.tsx": $account_orders,
+    "./routes/account/orders/[id].tsx": $account_orders_id_,
     "./routes/admin/_middleware.ts": $admin_middleware,
     "./routes/admin/index.tsx": $admin_index,
     "./routes/admin/invoices.tsx": $admin_invoices,
@@ -80,6 +86,9 @@ const manifest = {
     "./routes/admin/products.tsx": $admin_products,
     "./routes/admin/reports.tsx": $admin_reports,
     "./routes/api/_middleware.ts": $api_middleware,
+    "./routes/api/account/addresses/[id].ts": $api_account_addresses_id_,
+    "./routes/api/account/addresses/index.ts": $api_account_addresses_index,
+    "./routes/api/account/profile.ts": $api_account_profile,
     "./routes/api/admin/invoices/index.ts": $api_admin_invoices_index,
     "./routes/api/admin/orders/[id]/index.ts": $api_admin_orders_id_index,
     "./routes/api/admin/orders/[id]/invoice.ts": $api_admin_orders_id_invoice,
@@ -108,6 +117,7 @@ const manifest = {
     "./routes/shop/index.tsx": $shop_index,
   },
   islands: {
+    "./islands/AccountProfile.tsx": $AccountProfile,
     "./islands/AddToCart.tsx": $AddToCart,
     "./islands/AdminInvoiceList.tsx": $AdminInvoiceList,
     "./islands/AdminOrderActions.tsx": $AdminOrderActions,

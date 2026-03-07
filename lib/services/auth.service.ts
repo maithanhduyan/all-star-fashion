@@ -193,6 +193,145 @@ export function parseSessionIdFromCookie(
   return match?.[1] ?? null;
 }
 
+// ── Update Profile ──
+
+export async function updateProfile(
+  userId: string,
+  input: { name?: string; phone?: string },
+): Promise<UserResponse> {
+  const sets: string[] = [];
+  const args: unknown[] = [];
+  let idx = 1;
+
+  if (input.name !== undefined) {
+    sets.push(`name = $${idx++}`);
+    args.push(input.name.trim());
+  }
+  if (input.phone !== undefined) {
+    sets.push(`phone = $${idx++}`);
+    args.push(input.phone || null);
+  }
+  if (sets.length === 0) throw new AuthError("Không có gì để cập nhật", "NO_CHANGES", 400);
+
+  sets.push(`updated_at = NOW()`);
+  args.push(userId);
+
+  const user = await queryOne<{ id: string; email: string; name: string; phone: string | null; role: string }>(
+    `UPDATE users SET ${sets.join(", ")} WHERE id = $${idx} RETURNING id, email, name, phone, role`,
+    args,
+  );
+  if (!user) throw new AuthError("Không tìm thấy người dùng", "NOT_FOUND", 404);
+
+  return user;
+}
+
+// ── Change Password ──
+
+export async function changePassword(
+  userId: string,
+  currentPassword: string,
+  newPassword: string,
+): Promise<void> {
+  const user = await queryOne<{ password_hash: string }>(
+    "SELECT password_hash FROM users WHERE id = $1",
+    [userId],
+  );
+  if (!user) throw new AuthError("Không tìm thấy người dùng", "NOT_FOUND", 404);
+
+  const valid = await compare(currentPassword, user.password_hash);
+  if (!valid) throw new AuthError("Mật khẩu hiện tại không đúng", "WRONG_PASSWORD", 400);
+
+  const newHash = await hash(newPassword);
+  await execute("UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2", [newHash, userId]);
+}
+
+// ── User Addresses ──
+
+export interface UserAddress {
+  id: string;
+  userId: string;
+  label: string;
+  recipientName: string;
+  phone: string;
+  address: string;
+  district: string;
+  city: string;
+  isDefault: boolean;
+}
+
+export async function getUserAddresses(userId: string): Promise<UserAddress[]> {
+  const rows = await query<{
+    id: string; user_id: string; label: string; recipient_name: string;
+    phone: string; address: string; district: string; city: string; is_default: boolean;
+  }>(
+    "SELECT * FROM user_addresses WHERE user_id = $1 ORDER BY is_default DESC, created_at DESC",
+    [userId],
+  );
+  return rows.map((r) => ({
+    id: r.id, userId: r.user_id, label: r.label, recipientName: r.recipient_name,
+    phone: r.phone, address: r.address, district: r.district, city: r.city, isDefault: r.is_default,
+  }));
+}
+
+export async function addUserAddress(userId: string, input: {
+  label: string; recipientName: string; phone: string;
+  address: string; district: string; city: string; isDefault?: boolean;
+}): Promise<UserAddress> {
+  // If setting as default, unset others
+  if (input.isDefault) {
+    await execute("UPDATE user_addresses SET is_default = false WHERE user_id = $1", [userId]);
+  }
+  const row = await queryOne<{
+    id: string; user_id: string; label: string; recipient_name: string;
+    phone: string; address: string; district: string; city: string; is_default: boolean;
+  }>(
+    `INSERT INTO user_addresses (user_id, label, recipient_name, phone, address, district, city, is_default)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+     RETURNING *`,
+    [userId, input.label, input.recipientName, input.phone, input.address, input.district, input.city, input.isDefault ?? false],
+  );
+  if (!row) throw new Error("Failed to create address");
+  return {
+    id: row.id, userId: row.user_id, label: row.label, recipientName: row.recipient_name,
+    phone: row.phone, address: row.address, district: row.district, city: row.city, isDefault: row.is_default,
+  };
+}
+
+export async function updateUserAddress(userId: string, addressId: string, input: {
+  label?: string; recipientName?: string; phone?: string;
+  address?: string; district?: string; city?: string; isDefault?: boolean;
+}): Promise<UserAddress> {
+  if (input.isDefault) {
+    await execute("UPDATE user_addresses SET is_default = false WHERE user_id = $1", [userId]);
+  }
+  const row = await queryOne<{
+    id: string; user_id: string; label: string; recipient_name: string;
+    phone: string; address: string; district: string; city: string; is_default: boolean;
+  }>(
+    `UPDATE user_addresses SET
+       label = COALESCE($3, label), recipient_name = COALESCE($4, recipient_name),
+       phone = COALESCE($5, phone), address = COALESCE($6, address),
+       district = COALESCE($7, district), city = COALESCE($8, city),
+       is_default = COALESCE($9, is_default), updated_at = NOW()
+     WHERE id = $2 AND user_id = $1
+     RETURNING *`,
+    [userId, addressId, input.label, input.recipientName, input.phone, input.address, input.district, input.city, input.isDefault],
+  );
+  if (!row) throw new AuthError("Địa chỉ không tồn tại", "NOT_FOUND", 404);
+  return {
+    id: row.id, userId: row.user_id, label: row.label, recipientName: row.recipient_name,
+    phone: row.phone, address: row.address, district: row.district, city: row.city, isDefault: row.is_default,
+  };
+}
+
+export async function deleteUserAddress(userId: string, addressId: string): Promise<void> {
+  const result = await execute(
+    "DELETE FROM user_addresses WHERE id = $1 AND user_id = $2",
+    [addressId, userId],
+  );
+  if (result === 0) throw new AuthError("Địa chỉ không tồn tại", "NOT_FOUND", 404);
+}
+
 // ── Auth Error ──
 
 export class AuthError extends Error {
