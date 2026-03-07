@@ -41,6 +41,7 @@ import * as $CheckoutForm from "./islands/CheckoutForm.tsx";
 import * as $Counter from "./islands/Counter.tsx";
 import * as $LoginForm from "./islands/LoginForm.tsx";
 import * as $MobileMenu from "./islands/MobileMenu.tsx";
+import * as $PageTransition from "./islands/PageTransition.tsx";
 import * as $ProductGallery from "./islands/ProductGallery.tsx";
 import * as $RegisterForm from "./islands/RegisterForm.tsx";
 import * as $ScrollToTop from "./islands/ScrollToTop.tsx";
@@ -92,6 +93,7 @@ const manifest = {
     "./islands/Counter.tsx": $Counter,
     "./islands/LoginForm.tsx": $LoginForm,
     "./islands/MobileMenu.tsx": $MobileMenu,
+    "./islands/PageTransition.tsx": $PageTransition,
     "./islands/ProductGallery.tsx": $ProductGallery,
     "./islands/RegisterForm.tsx": $RegisterForm,
     "./islands/ScrollToTop.tsx": $ScrollToTop,

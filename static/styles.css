@@ -180,3 +180,152 @@
 .animate-badge-pop {
   animation: badge-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
+
+/* ===== Page Transition System ===== */
+
+/* 1. Smooth page fade-in on load */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Main content area fade-in */
+main.flex-1 {
+  animation: page-fade-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* Navbar stays instant - no animation delay */
+header.sticky {
+  animation: none;
+}
+
+/* 2. Page exit overlay (controlled by JS) */
+.page-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #fafafa;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.page-transition-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* 3. View Transitions API (for modern browsers) */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: 0.25s ease-out both fade-out-gentle;
+}
+
+::view-transition-new(root) {
+  animation: 0.4s ease-out both fade-in-gentle;
+}
+
+@keyframes fade-out-gentle {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.998);
+  }
+}
+
+@keyframes fade-in-gentle {
+  from {
+    opacity: 0;
+    transform: scale(1.002);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 4. Staggered content reveal (Intersection Observer driven) */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.reveal.revealed {
+  animation: reveal-up 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.reveal-fade {
+  opacity: 0;
+  will-change: opacity;
+}
+
+.reveal-fade.revealed {
+  animation: reveal-fade 0.5s ease-out both;
+}
+
+/* Stagger delays for grid children */
+.reveal-stagger > .reveal:nth-child(1) { animation-delay: 0ms; }
+.reveal-stagger > .reveal:nth-child(2) { animation-delay: 80ms; }
+.reveal-stagger > .reveal:nth-child(3) { animation-delay: 160ms; }
+.reveal-stagger > .reveal:nth-child(4) { animation-delay: 240ms; }
+.reveal-stagger > .reveal:nth-child(5) { animation-delay: 320ms; }
+.reveal-stagger > .reveal:nth-child(6) { animation-delay: 400ms; }
+.reveal-stagger > .reveal:nth-child(7) { animation-delay: 480ms; }
+.reveal-stagger > .reveal:nth-child(8) { animation-delay: 560ms; }
+
+/* 5. Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  main.flex-1 {
+    animation: none;
+  }
+
+  .reveal,
+  .reveal-fade {
+    opacity: 1;
+    animation: none !important;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.01s !important;
+  }
+
+  .page-transition-overlay {
+    transition-duration: 0.01s;
+  }
+}

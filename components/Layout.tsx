@@ -2,6 +2,7 @@ import Navbar from "./Navbar.tsx";
 import Footer from "./Footer.tsx";
 import ScrollToTop from "../islands/ScrollToTop.tsx";
 import ChatWidget from "../islands/ChatWidget.tsx";
+import PageTransition from "../islands/PageTransition.tsx";
 import { ComponentChildren } from "preact";
 
 interface LayoutProps {
@@ -16,6 +17,7 @@ export default function Layout({ children }: LayoutProps) {
       <Footer />
       <ScrollToTop />
       <ChatWidget />
+      <PageTransition />
     </div>
   );
 }

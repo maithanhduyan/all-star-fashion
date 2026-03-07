@@ -22,7 +22,7 @@ export default function AboutPage() {
       </section>
 
       {/* Story */}
-      <section class="max-w-3xl mx-auto px-6 py-20 text-center">
+      <section class="max-w-3xl mx-auto px-6 py-20 text-center reveal">
         <h2 class="font-display text-3xl font-light tracking-wide mb-8">
           Câu Chuyện Của Chúng Tôi
         </h2>
@@ -50,8 +50,8 @@ export default function AboutPage() {
           <h2 class="font-display text-3xl font-light tracking-wide text-center mb-12">
             Giá Trị Cốt Lõi
           </h2>
-          <div class="grid md:grid-cols-3 gap-12">
-            <div class="text-center">
+          <div class="grid md:grid-cols-3 gap-12 reveal-stagger">
+            <div class="text-center reveal">
               <h3 class="text-sm tracking-wider uppercase mb-4">Chất Lượng</h3>
               <p class="text-sm text-brand-gray leading-relaxed">
                 Chúng tôi chỉ sử dụng những chất liệu tốt nhất, được kiểm
@@ -59,7 +59,7 @@ export default function AboutPage() {
                 mặc.
               </p>
             </div>
-            <div class="text-center">
+            <div class="text-center reveal">
               <h3 class="text-sm tracking-wider uppercase mb-4">
                 Thiết Kế Tối Giản
               </h3>
@@ -68,7 +68,7 @@ export default function AboutPage() {
                 trong mọi hoàn cảnh mà không bao giờ lỗi thời.
               </p>
             </div>
-            <div class="text-center">
+            <div class="text-center reveal">
               <h3 class="text-sm tracking-wider uppercase mb-4">Bền Vững</h3>
               <p class="text-sm text-brand-gray leading-relaxed">
                 Chúng tôi hướng đến thời trang bền vững, giảm thiểu tác động
@@ -80,7 +80,7 @@ export default function AboutPage() {
       </section>
 
       {/* Contact section */}
-      <section class="max-w-3xl mx-auto px-6 py-20 text-center">
+      <section class="max-w-3xl mx-auto px-6 py-20 text-center reveal">
         <h2 class="font-display text-3xl font-light tracking-wide mb-8">
           Liên Hệ
         </h2>

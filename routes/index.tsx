@@ -45,7 +45,7 @@ export default function HomePage({ data }: PageProps<HomeData>) {
 
       {/* Categories Grid */}
       <section class="max-w-7xl mx-auto px-6 py-20">
-        <div class="text-center mb-12">
+        <div class="text-center mb-12 reveal">
           <h2 class="font-display text-3xl md:text-4xl font-light tracking-wide mb-3">
             Danh Mục
           </h2>
@@ -53,9 +53,11 @@ export default function HomePage({ data }: PageProps<HomeData>) {
             Khám phá các danh mục sản phẩm của chúng tôi
           </p>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 reveal-stagger">
           {categories.map((cat) => (
-            <CategoryCard key={cat.id} category={cat} />
+            <div key={cat.id} class="reveal">
+              <CategoryCard category={cat} />
+            </div>
           ))}
         </div>
       </section>
@@ -63,7 +65,7 @@ export default function HomePage({ data }: PageProps<HomeData>) {
       {/* New Arrivals */}
       <section class="bg-brand-beige">
         <div class="max-w-7xl mx-auto px-6 py-20">
-          <div class="flex items-center justify-between mb-12">
+          <div class="flex items-center justify-between mb-12 reveal">
             <div>
               <h2 class="font-display text-3xl md:text-4xl font-light tracking-wide mb-2">
                 Hàng Mới Về
@@ -84,7 +86,7 @@ export default function HomePage({ data }: PageProps<HomeData>) {
       </section>
 
       {/* Editorial Banner */}
-      <section class="relative h-[60vh] min-h-[400px] overflow-hidden">
+      <section class="relative h-[60vh] min-h-[400px] overflow-hidden reveal-fade">
         <img
           src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=1920&h=800&fit=crop"
           alt="Editorial"
@@ -109,7 +111,7 @@ export default function HomePage({ data }: PageProps<HomeData>) {
 
       {/* Best Sellers */}
       <section class="max-w-7xl mx-auto px-6 py-20">
-        <div class="flex items-center justify-between mb-12">
+        <div class="flex items-center justify-between mb-12 reveal">
           <div>
             <h2 class="font-display text-3xl md:text-4xl font-light tracking-wide mb-2">
               Bán Chạy Nhất
@@ -129,7 +131,7 @@ export default function HomePage({ data }: PageProps<HomeData>) {
       </section>
 
       {/* Features */}
-      <section class="border-t border-brand-light-gray">
+      <section class="border-t border-brand-light-gray reveal">
         <div class="max-w-7xl mx-auto px-6 py-16">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div>

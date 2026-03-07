@@ -26,6 +26,7 @@ export default function App({ Component, state }: PageProps<unknown, AppState>) 
         <meta name="twitter:title" content="All Star Fashion - Thời Trang Cao Cấp" />
         <meta name="twitter:description" content="Thời trang cao cấp cho người Việt hiện đại." />
         <meta name="theme-color" content="#111111" />
+        <meta name="view-transition" content="same-origin" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
