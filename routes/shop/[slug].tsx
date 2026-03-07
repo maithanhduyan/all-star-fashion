@@ -4,11 +4,8 @@ import Layout from "../../components/Layout.tsx";
 import ProductGrid from "../../components/ProductGrid.tsx";
 import ProductGallery from "../../islands/ProductGallery.tsx";
 import AddToCart from "../../islands/AddToCart.tsx";
-import {
-  formatPrice,
-  getProductBySlug,
-  getProductsByCategory,
-} from "../../lib/data.ts";
+import { formatPrice, toProduct } from "../../lib/utils.ts";
+import { getProductBySlug, getRelatedProducts } from "../../lib/services/product.service.ts";
 import type { Product } from "../../lib/types.ts";
 
 interface Data {
@@ -17,17 +14,22 @@ interface Data {
 }
 
 export const handler: Handlers<Data> = {
-  GET(_req, ctx) {
-    const product = getProductBySlug(ctx.params.slug);
-    if (!product) {
+  async GET(_req, ctx) {
+    const raw = await getProductBySlug(ctx.params.slug);
+    if (!raw) {
       return ctx.renderNotFound();
     }
 
-    const relatedProducts = getProductsByCategory(product.category)
-      .filter((p) => p.id !== product.id)
-      .slice(0, 4);
+    const product = toProduct(raw);
 
-    return ctx.render({ product, relatedProducts });
+    const relatedRaw = raw.category
+      ? await getRelatedProducts(raw.category.id, raw.id, 4)
+      : [];
+
+    return ctx.render({
+      product,
+      relatedProducts: relatedRaw.map(toProduct),
+    });
   },
 };
 

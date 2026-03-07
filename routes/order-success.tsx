@@ -1,6 +1,49 @@
+import { Handlers, PageProps } from "$fresh/server.ts";
 import Layout from "../components/Layout.tsx";
+import { getOrderById } from "../lib/services/order.service.ts";
+import { formatPrice } from "../lib/utils.ts";
 
-export default function OrderSuccessPage() {
+interface OrderData {
+  orderNumber: string;
+  total: number;
+  paymentMethod: string;
+  customerName: string;
+  customerEmail: string;
+  shippingAddress: string;
+  city: string;
+  district: string;
+}
+
+export const handler: Handlers<OrderData | null> = {
+  async GET(req, ctx) {
+    const url = new URL(req.url);
+    const id = url.searchParams.get("id");
+
+    if (!id) {
+      return ctx.render(null);
+    }
+
+    try {
+      const order = await getOrderById(id);
+      if (!order) return ctx.render(null);
+
+      return ctx.render({
+        orderNumber: order.orderNumber,
+        total: order.total,
+        paymentMethod: order.paymentMethod,
+        customerName: order.customerName,
+        customerEmail: order.customerEmail,
+        shippingAddress: order.shippingAddress,
+        city: order.city,
+        district: order.district,
+      });
+    } catch {
+      return ctx.render(null);
+    }
+  },
+};
+
+export default function OrderSuccessPage({ data }: PageProps<OrderData | null>) {
   return (
     <Layout>
       <div class="max-w-2xl mx-auto px-6 py-24 text-center">
@@ -34,31 +77,60 @@ export default function OrderSuccessPage() {
           và giao hàng trong thời gian sớm nhất.
         </p>
 
-        {/* Order number */}
-        <div class="bg-brand-beige p-6 rounded-sm mb-8">
-          <p class="text-xs tracking-wider uppercase text-brand-gray mb-2">
-            Mã đơn hàng
-          </p>
-          <p class="font-display text-2xl tracking-wide">
-            #AS-2026-{Math.floor(Math.random() * 9000 + 1000)}
-          </p>
-        </div>
+        {data && (
+          <>
+            {/* Order number */}
+            <div class="bg-brand-beige p-6 rounded-sm mb-8">
+              <p class="text-xs tracking-wider uppercase text-brand-gray mb-2">
+                Mã đơn hàng
+              </p>
+              <p class="font-display text-2xl tracking-wide">
+                #{data.orderNumber}
+              </p>
+            </div>
 
-        {/* Info cards */}
-        <div class="grid sm:grid-cols-2 gap-4 mb-10 text-left">
-          <div class="border border-brand-light-gray p-5">
-            <p class="text-xs tracking-wider uppercase text-brand-gray mb-2">
-              Phương thức thanh toán
+            {/* Info cards */}
+            <div class="grid sm:grid-cols-2 gap-4 mb-10 text-left">
+              <div class="border border-brand-light-gray p-5">
+                <p class="text-xs tracking-wider uppercase text-brand-gray mb-2">
+                  Phương thức thanh toán
+                </p>
+                <p class="text-sm">
+                  {data.paymentMethod === "cod"
+                    ? "Thanh toán khi nhận hàng (COD)"
+                    : data.paymentMethod}
+                </p>
+              </div>
+              <div class="border border-brand-light-gray p-5">
+                <p class="text-xs tracking-wider uppercase text-brand-gray mb-2">
+                  Tổng thanh toán
+                </p>
+                <p class="text-sm font-medium">{formatPrice(data.total)}</p>
+              </div>
+              <div class="border border-brand-light-gray p-5">
+                <p class="text-xs tracking-wider uppercase text-brand-gray mb-2">
+                  Giao đến
+                </p>
+                <p class="text-sm">{data.shippingAddress}, {data.district}, {data.city}</p>
+              </div>
+              <div class="border border-brand-light-gray p-5">
+                <p class="text-xs tracking-wider uppercase text-brand-gray mb-2">
+                  Thời gian giao hàng dự kiến
+                </p>
+                <p class="text-sm">2-5 ngày làm việc</p>
+              </div>
+            </div>
+          </>
+        )}
+
+        {!data && (
+          <div class="bg-brand-beige p-6 rounded-sm mb-8">
+            <p class="text-sm text-brand-gray">
+              Đơn hàng đã được ghi nhận. Vui lòng kiểm tra email để biết thêm
+              chi tiết.
             </p>
-            <p class="text-sm">Chuyển khoản ngân hàng</p>
           </div>
-          <div class="border border-brand-light-gray p-5">
-            <p class="text-xs tracking-wider uppercase text-brand-gray mb-2">
-              Thời gian giao hàng dự kiến
-            </p>
-            <p class="text-sm">2-5 ngày làm việc</p>
-          </div>
-        </div>
+        )}
 
         {/* Actions */}
         <div class="flex flex-col sm:flex-row gap-4 justify-center">

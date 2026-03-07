@@ -1,35 +1,83 @@
-import { type PageProps } from "$fresh/server.ts";
+import { Handlers, type PageProps } from "$fresh/server.ts";
 import Layout from "../../components/Layout.tsx";
 import ProductGrid from "../../components/ProductGrid.tsx";
 import SearchBar from "../../islands/SearchBar.tsx";
-import {
-  categories,
-  getCategoryBySlug,
-  getProductsByCategory,
-  products,
-} from "../../lib/data.ts";
+import { getProducts } from "../../lib/services/product.service.ts";
+import { getCategories } from "../../lib/services/category.service.ts";
+import { toProduct } from "../../lib/utils.ts";
+import type { Product, Category } from "../../lib/types.ts";
 
-export default function ShopPage(props: PageProps) {
-  const url = new URL(props.url);
-  const categorySlug = url.searchParams.get("category") || "";
-  const searchQuery = url.searchParams.get("q") || "";
+interface ShopData {
+  products: Product[];
+  categories: Category[];
+  total: number;
+  page: number;
+  totalPages: number;
+  categorySlug: string;
+  searchQuery: string;
+  activeCategory?: Category;
+}
 
-  const activeCategory = categorySlug
-    ? getCategoryBySlug(categorySlug)
-    : undefined;
+export const handler: Handlers<ShopData> = {
+  async GET(req, ctx) {
+    const url = new URL(req.url);
+    const categorySlug = url.searchParams.get("category") || "";
+    const searchQuery = url.searchParams.get("q") || "";
+    const page = Math.max(1, Number(url.searchParams.get("page")) || 1);
+    const sort = url.searchParams.get("sort") || undefined;
 
-  let filteredProducts = categorySlug
-    ? getProductsByCategory(categorySlug)
-    : [...products];
+    const [result, categoriesRaw] = await Promise.all([
+      getProducts({
+        category: categorySlug || undefined,
+        q: searchQuery || undefined,
+        page,
+        limit: 12,
+        sort,
+      }),
+      getCategories(),
+    ]);
 
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    filteredProducts = filteredProducts.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q),
-    );
-  }
+    const activeCategory = categorySlug
+      ? categoriesRaw.find((c) => c.slug === categorySlug)
+      : undefined;
+
+    return ctx.render({
+      products: result.data.map(toProduct),
+      categories: categoriesRaw,
+      total: result.pagination.total,
+      page: result.pagination.page,
+      totalPages: result.pagination.totalPages,
+      categorySlug,
+      searchQuery,
+      activeCategory,
+    });
+  },
+};
+
+function buildPageUrl(
+  page: number,
+  category: string,
+  q: string,
+): string {
+  const params = new URLSearchParams();
+  if (category) params.set("category", category);
+  if (q) params.set("q", q);
+  if (page > 1) params.set("page", String(page));
+  const qs = params.toString();
+  return `/shop${qs ? "?" + qs : ""}`;
+}
+
+export default function ShopPage({ data }: PageProps<ShopData>) {
+  const {
+    products: filteredProducts,
+    categories,
+    total,
+    page,
+    totalPages,
+    categorySlug,
+    searchQuery,
+    activeCategory,
+  } = data;
 
   const pageTitle = activeCategory
     ? activeCategory.name
@@ -46,7 +94,7 @@ export default function ShopPage(props: PageProps) {
             {pageTitle}
           </h1>
           <p class="text-sm text-brand-gray">
-            {filteredProducts.length} sản phẩm
+            {total} sản phẩm
           </p>
         </div>
       </div>
@@ -99,7 +147,45 @@ export default function ShopPage(props: PageProps) {
           <div>
             {filteredProducts.length > 0
               ? (
-                <ProductGrid products={filteredProducts} columns={3} />
+                <>
+                  <ProductGrid products={filteredProducts} columns={3} />
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div class="flex justify-center gap-2 mt-12">
+                      {page > 1 && (
+                        <a
+                          href={buildPageUrl(page - 1, categorySlug, searchQuery)}
+                          class="border border-brand-light-gray px-4 py-2 text-sm hover:border-brand-black transition-colors"
+                        >
+                          ← Trước
+                        </a>
+                      )}
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (p) => (
+                          <a
+                            key={p}
+                            href={buildPageUrl(p, categorySlug, searchQuery)}
+                            class={`border px-4 py-2 text-sm transition-colors ${
+                              p === page
+                                ? "bg-brand-black text-white border-brand-black"
+                                : "border-brand-light-gray hover:border-brand-black"
+                            }`}
+                          >
+                            {p}
+                          </a>
+                        ),
+                      )}
+                      {page < totalPages && (
+                        <a
+                          href={buildPageUrl(page + 1, categorySlug, searchQuery)}
+                          class="border border-brand-light-gray px-4 py-2 text-sm hover:border-brand-black transition-colors"
+                        >
+                          Tiếp →
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </>
               )
               : (
                 <div class="text-center py-20">

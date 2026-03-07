@@ -1,5 +1,8 @@
 import { type PageProps } from "$fresh/server.ts";
-export default function App({ Component }: PageProps) {
+import type { AppState } from "./_middleware.ts";
+
+export default function App({ Component, state }: PageProps<unknown, AppState>) {
+  const user = state?.user ?? null;
   return (
     <html lang="vi">
       <head>
@@ -36,6 +39,14 @@ export default function App({ Component }: PageProps) {
         <link rel="stylesheet" href="/styles.css" />
       </head>
       <body class="font-sans text-brand-black bg-brand-white antialiased">
+        {/* Pass user info as a data attribute for islands to read */}
+        <script
+          id="__user"
+          type="application/json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(user ? { name: user.name, email: user.email, role: user.role } : null),
+          }}
+        />
         <Component />
       </body>
     </html>

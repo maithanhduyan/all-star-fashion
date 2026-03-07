@@ -4,9 +4,28 @@
 
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
+import * as $_middleware from "./routes/_middleware.ts";
 import * as $about from "./routes/about.tsx";
+import * as $account_middleware from "./routes/account/_middleware.ts";
+import * as $account_index from "./routes/account/index.tsx";
+import * as $account_orders from "./routes/account/orders.tsx";
+import * as $admin_middleware from "./routes/admin/_middleware.ts";
+import * as $admin_index from "./routes/admin/index.tsx";
+import * as $admin_orders from "./routes/admin/orders.tsx";
+import * as $admin_products from "./routes/admin/products.tsx";
+import * as $api_middleware from "./routes/api/_middleware.ts";
+import * as $api_admin_orders_id_status from "./routes/api/admin/orders/[id]/status.ts";
+import * as $api_auth_login from "./routes/api/auth/login.ts";
+import * as $api_auth_logout from "./routes/api/auth/logout.ts";
+import * as $api_auth_me from "./routes/api/auth/me.ts";
+import * as $api_auth_register from "./routes/api/auth/register.ts";
+import * as $api_categories_index from "./routes/api/categories/index.ts";
+import * as $api_orders_id_ from "./routes/api/orders/[id].ts";
+import * as $api_orders_index from "./routes/api/orders/index.ts";
 import * as $api_products_slug_ from "./routes/api/products/[slug].ts";
 import * as $api_products_index from "./routes/api/products/index.ts";
+import * as $auth_login from "./routes/auth/login.tsx";
+import * as $auth_register from "./routes/auth/register.tsx";
 import * as $cart from "./routes/cart.tsx";
 import * as $checkout from "./routes/checkout.tsx";
 import * as $index from "./routes/index.tsx";
@@ -14,25 +33,48 @@ import * as $order_success from "./routes/order-success.tsx";
 import * as $shop_slug_ from "./routes/shop/[slug].tsx";
 import * as $shop_index from "./routes/shop/index.tsx";
 import * as $AddToCart from "./islands/AddToCart.tsx";
+import * as $AdminOrderActions from "./islands/AdminOrderActions.tsx";
 import * as $CartBadge from "./islands/CartBadge.tsx";
 import * as $CartView from "./islands/CartView.tsx";
 import * as $ChatWidget from "./islands/ChatWidget.tsx";
 import * as $CheckoutForm from "./islands/CheckoutForm.tsx";
 import * as $Counter from "./islands/Counter.tsx";
+import * as $LoginForm from "./islands/LoginForm.tsx";
 import * as $MobileMenu from "./islands/MobileMenu.tsx";
 import * as $ProductGallery from "./islands/ProductGallery.tsx";
+import * as $RegisterForm from "./islands/RegisterForm.tsx";
 import * as $ScrollToTop from "./islands/ScrollToTop.tsx";
 import * as $SearchBar from "./islands/SearchBar.tsx";
 import * as $SearchModal from "./islands/SearchModal.tsx";
+import * as $UserMenu from "./islands/UserMenu.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
+    "./routes/_middleware.ts": $_middleware,
     "./routes/about.tsx": $about,
+    "./routes/account/_middleware.ts": $account_middleware,
+    "./routes/account/index.tsx": $account_index,
+    "./routes/account/orders.tsx": $account_orders,
+    "./routes/admin/_middleware.ts": $admin_middleware,
+    "./routes/admin/index.tsx": $admin_index,
+    "./routes/admin/orders.tsx": $admin_orders,
+    "./routes/admin/products.tsx": $admin_products,
+    "./routes/api/_middleware.ts": $api_middleware,
+    "./routes/api/admin/orders/[id]/status.ts": $api_admin_orders_id_status,
+    "./routes/api/auth/login.ts": $api_auth_login,
+    "./routes/api/auth/logout.ts": $api_auth_logout,
+    "./routes/api/auth/me.ts": $api_auth_me,
+    "./routes/api/auth/register.ts": $api_auth_register,
+    "./routes/api/categories/index.ts": $api_categories_index,
+    "./routes/api/orders/[id].ts": $api_orders_id_,
+    "./routes/api/orders/index.ts": $api_orders_index,
     "./routes/api/products/[slug].ts": $api_products_slug_,
     "./routes/api/products/index.ts": $api_products_index,
+    "./routes/auth/login.tsx": $auth_login,
+    "./routes/auth/register.tsx": $auth_register,
     "./routes/cart.tsx": $cart,
     "./routes/checkout.tsx": $checkout,
     "./routes/index.tsx": $index,
@@ -42,16 +84,20 @@ const manifest = {
   },
   islands: {
     "./islands/AddToCart.tsx": $AddToCart,
+    "./islands/AdminOrderActions.tsx": $AdminOrderActions,
     "./islands/CartBadge.tsx": $CartBadge,
     "./islands/CartView.tsx": $CartView,
     "./islands/ChatWidget.tsx": $ChatWidget,
     "./islands/CheckoutForm.tsx": $CheckoutForm,
     "./islands/Counter.tsx": $Counter,
+    "./islands/LoginForm.tsx": $LoginForm,
     "./islands/MobileMenu.tsx": $MobileMenu,
     "./islands/ProductGallery.tsx": $ProductGallery,
+    "./islands/RegisterForm.tsx": $RegisterForm,
     "./islands/ScrollToTop.tsx": $ScrollToTop,
     "./islands/SearchBar.tsx": $SearchBar,
     "./islands/SearchModal.tsx": $SearchModal,
+    "./islands/UserMenu.tsx": $UserMenu,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

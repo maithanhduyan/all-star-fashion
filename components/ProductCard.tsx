@@ -1,5 +1,5 @@
 import type { Product } from "../lib/types.ts";
-import { formatPrice } from "../lib/data.ts";
+import { formatPrice } from "../lib/utils.ts";
 
 interface ProductCardProps {
   product: Product;

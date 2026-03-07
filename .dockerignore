@@ -1,0 +1,35 @@
+# Dependencies & build
+node_modules/
+_fresh/
+.deno/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Git
+.git/
+.gitignore
+
+# Docs
+docs/
+README.md
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dev tools
+.playwright-mcp/
+.hotplate/
+
+# Test/temp files
+*.test.ts
+test_*.json
+test_*.txt
+admin_cookie.txt

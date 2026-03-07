@@ -2,6 +2,7 @@ import { categories } from "../lib/data.ts";
 import MobileMenu from "../islands/MobileMenu.tsx";
 import CartBadge from "../islands/CartBadge.tsx";
 import SearchModal from "../islands/SearchModal.tsx";
+import UserMenu from "../islands/UserMenu.tsx";
 
 export default function Navbar() {
   return (
@@ -47,6 +48,9 @@ export default function Navbar() {
         <div class="flex items-center gap-5">
           {/* Search Modal Island (includes trigger button) */}
           <SearchModal />
+
+          {/* User menu */}
+          <UserMenu />
 
           {/* Cart with badge */}
           <CartBadge />

@@ -1,12 +1,37 @@
+import { Handlers, PageProps } from "$fresh/server.ts";
 import Layout from "../components/Layout.tsx";
 import Hero from "../components/Hero.tsx";
 import ProductGrid from "../components/ProductGrid.tsx";
 import CategoryCard from "../components/CategoryCard.tsx";
-import { categories, getBestSellers, getNewArrivals } from "../lib/data.ts";
+import { getBestSellers, getNewArrivals } from "../lib/services/product.service.ts";
+import { getCategories } from "../lib/services/category.service.ts";
+import { toProduct } from "../lib/utils.ts";
+import type { Product, Category } from "../lib/types.ts";
 
-export default function HomePage() {
-  const bestSellers = getBestSellers();
-  const newArrivals = getNewArrivals();
+interface HomeData {
+  categories: Category[];
+  bestSellers: Product[];
+  newArrivals: Product[];
+}
+
+export const handler: Handlers<HomeData> = {
+  async GET(_req, ctx) {
+    const [categoriesRaw, bestSellersRaw, newArrivalsRaw] = await Promise.all([
+      getCategories(),
+      getBestSellers(4),
+      getNewArrivals(4),
+    ]);
+
+    return ctx.render({
+      categories: categoriesRaw,
+      bestSellers: bestSellersRaw.map(toProduct),
+      newArrivals: newArrivalsRaw.map(toProduct),
+    });
+  },
+};
+
+export default function HomePage({ data }: PageProps<HomeData>) {
+  const { categories, bestSellers, newArrivals } = data;
 
   return (
     <Layout>
