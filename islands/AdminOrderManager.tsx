@@ -403,7 +403,7 @@ export default function AdminOrderManager({ initialOrders, initialPagination, in
     if (!win) return;
     win.document.write(`
       <!DOCTYPE html>
-      <html><head><title>Hóa đơn ${invoice.invoiceNumber}</title>
+      <html><head><meta charset="utf-8" /><title>Hóa đơn ${invoice.invoiceNumber}</title>
       <style>
         body { font-family: 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 40px; color: #333; }
         .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }

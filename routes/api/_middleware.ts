@@ -8,7 +8,7 @@ export async function handler(
   const resp = await ctx.next();
   // Only set content-type if not already set
   if (!resp.headers.has("content-type")) {
-    resp.headers.set("content-type", "application/json");
+    resp.headers.set("content-type", "application/json; charset=utf-8");
   }
   return resp;
 }

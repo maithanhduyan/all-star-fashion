@@ -1746,7 +1746,7 @@ export async function exportOrdersCSV(options: {
     ].join(","),
   );
 
-  return [header, ...lines].join("\n");
+  return "\uFEFF" + [header, ...lines].join("\n");
 }
 
 // ── Order Error ──
