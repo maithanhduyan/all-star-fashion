@@ -11,10 +11,20 @@ import * as $account_index from "./routes/account/index.tsx";
 import * as $account_orders from "./routes/account/orders.tsx";
 import * as $admin_middleware from "./routes/admin/_middleware.ts";
 import * as $admin_index from "./routes/admin/index.tsx";
+import * as $admin_invoices from "./routes/admin/invoices.tsx";
 import * as $admin_orders from "./routes/admin/orders.tsx";
 import * as $admin_products from "./routes/admin/products.tsx";
+import * as $admin_reports from "./routes/admin/reports.tsx";
 import * as $api_middleware from "./routes/api/_middleware.ts";
+import * as $api_admin_invoices_index from "./routes/api/admin/invoices/index.ts";
+import * as $api_admin_orders_id_index from "./routes/api/admin/orders/[id]/index.ts";
+import * as $api_admin_orders_id_invoice from "./routes/api/admin/orders/[id]/invoice.ts";
+import * as $api_admin_orders_id_return from "./routes/api/admin/orders/[id]/return.ts";
 import * as $api_admin_orders_id_status from "./routes/api/admin/orders/[id]/status.ts";
+import * as $api_admin_orders_index from "./routes/api/admin/orders/index.ts";
+import * as $api_admin_products_id_ from "./routes/api/admin/products/[id].ts";
+import * as $api_admin_products_index from "./routes/api/admin/products/index.ts";
+import * as $api_admin_reports_index from "./routes/api/admin/reports/index.ts";
 import * as $api_auth_login from "./routes/api/auth/login.ts";
 import * as $api_auth_logout from "./routes/api/auth/logout.ts";
 import * as $api_auth_me from "./routes/api/auth/me.ts";
@@ -33,7 +43,11 @@ import * as $order_success from "./routes/order-success.tsx";
 import * as $shop_slug_ from "./routes/shop/[slug].tsx";
 import * as $shop_index from "./routes/shop/index.tsx";
 import * as $AddToCart from "./islands/AddToCart.tsx";
+import * as $AdminInvoiceList from "./islands/AdminInvoiceList.tsx";
 import * as $AdminOrderActions from "./islands/AdminOrderActions.tsx";
+import * as $AdminOrderManager from "./islands/AdminOrderManager.tsx";
+import * as $AdminProductManager from "./islands/AdminProductManager.tsx";
+import * as $BusinessReports from "./islands/BusinessReports.tsx";
 import * as $CartBadge from "./islands/CartBadge.tsx";
 import * as $CartView from "./islands/CartView.tsx";
 import * as $ChatWidget from "./islands/ChatWidget.tsx";
@@ -61,10 +75,20 @@ const manifest = {
     "./routes/account/orders.tsx": $account_orders,
     "./routes/admin/_middleware.ts": $admin_middleware,
     "./routes/admin/index.tsx": $admin_index,
+    "./routes/admin/invoices.tsx": $admin_invoices,
     "./routes/admin/orders.tsx": $admin_orders,
     "./routes/admin/products.tsx": $admin_products,
+    "./routes/admin/reports.tsx": $admin_reports,
     "./routes/api/_middleware.ts": $api_middleware,
+    "./routes/api/admin/invoices/index.ts": $api_admin_invoices_index,
+    "./routes/api/admin/orders/[id]/index.ts": $api_admin_orders_id_index,
+    "./routes/api/admin/orders/[id]/invoice.ts": $api_admin_orders_id_invoice,
+    "./routes/api/admin/orders/[id]/return.ts": $api_admin_orders_id_return,
     "./routes/api/admin/orders/[id]/status.ts": $api_admin_orders_id_status,
+    "./routes/api/admin/orders/index.ts": $api_admin_orders_index,
+    "./routes/api/admin/products/[id].ts": $api_admin_products_id_,
+    "./routes/api/admin/products/index.ts": $api_admin_products_index,
+    "./routes/api/admin/reports/index.ts": $api_admin_reports_index,
     "./routes/api/auth/login.ts": $api_auth_login,
     "./routes/api/auth/logout.ts": $api_auth_logout,
     "./routes/api/auth/me.ts": $api_auth_me,
@@ -85,7 +109,11 @@ const manifest = {
   },
   islands: {
     "./islands/AddToCart.tsx": $AddToCart,
+    "./islands/AdminInvoiceList.tsx": $AdminInvoiceList,
     "./islands/AdminOrderActions.tsx": $AdminOrderActions,
+    "./islands/AdminOrderManager.tsx": $AdminOrderManager,
+    "./islands/AdminProductManager.tsx": $AdminProductManager,
+    "./islands/BusinessReports.tsx": $BusinessReports,
     "./islands/CartBadge.tsx": $CartBadge,
     "./islands/CartView.tsx": $CartView,
     "./islands/ChatWidget.tsx": $ChatWidget,

@@ -1,50 +1,42 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import type { AppState } from "../_middleware.ts";
-import { getAllOrders, getShippingCarriers } from "../../lib/services/order.service.ts";
-import AdminOrderManager from "../../islands/AdminOrderManager.tsx";
+import { getAllInvoices } from "../../lib/services/order.service.ts";
+import AdminInvoiceList from "../../islands/AdminInvoiceList.tsx";
 
-interface OrdersData {
-  orders: unknown[];
+interface InvoicesData {
+  invoices: unknown[];
   pagination: { page: number; limit: number; total: number; totalPages: number };
-  carriers: unknown[];
 }
 
-export const handler: Handlers<OrdersData, AppState> = {
+export const handler: Handlers<InvoicesData, AppState> = {
   async GET(req, ctx) {
     const url = new URL(req.url);
-    const status = url.searchParams.get("status") || undefined;
     const q = url.searchParams.get("q") || undefined;
-    const page = Number(url.searchParams.get("page")) || 1;
-    const sort = url.searchParams.get("sort") || undefined;
     const paymentStatus = url.searchParams.get("paymentStatus") || undefined;
+    const page = Number(url.searchParams.get("page")) || 1;
     const dateFrom = url.searchParams.get("dateFrom") || undefined;
     const dateTo = url.searchParams.get("dateTo") || undefined;
 
-    const [result, carriers] = await Promise.all([
-      getAllOrders({ status, q, page, limit: 20, sort, paymentStatus, dateFrom, dateTo }),
-      getShippingCarriers(),
-    ]);
+    const result = await getAllInvoices({ q, paymentStatus, page, limit: 20, dateFrom, dateTo });
 
     return ctx.render({
-      orders: result.data,
+      invoices: result.data,
       pagination: result.pagination,
-      carriers,
     });
   },
 };
 
-export default function AdminOrdersPage({ data }: PageProps<OrdersData>) {
+export default function AdminInvoicesPage({ data }: PageProps<InvoicesData>) {
   return (
     <div class="min-h-screen bg-gray-50">
-      {/* Admin header */}
       <header class="bg-brand-black text-white">
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div class="flex items-center gap-6">
             <a href="/admin" class="font-display text-lg tracking-wide">Admin Panel</a>
             <nav class="hidden md:flex items-center gap-4 text-sm">
               <a href="/admin" class="hover:text-gray-300 transition-colors">Dashboard</a>
-              <a href="/admin/orders" class="text-white underline">Đơn hàng</a>
-              <a href="/admin/invoices" class="hover:text-gray-300 transition-colors">Hóa đơn</a>
+              <a href="/admin/orders" class="hover:text-gray-300 transition-colors">Đơn hàng</a>
+              <a href="/admin/invoices" class="text-white underline">Hóa đơn</a>
               <a href="/admin/products" class="hover:text-gray-300 transition-colors">Sản phẩm</a>
               <a href="/admin/reports" class="hover:text-gray-300 transition-colors">Báo cáo</a>
             </nav>
@@ -54,14 +46,21 @@ export default function AdminOrdersPage({ data }: PageProps<OrdersData>) {
       </header>
 
       <main class="max-w-7xl mx-auto px-6 py-8">
-        <h1 class="font-display text-3xl font-light tracking-wide mb-8">
-          Quản Lý Đơn Hàng
-        </h1>
+        <div class="flex items-center justify-between mb-8">
+          <h1 class="font-display text-3xl font-light tracking-wide">
+            Quản Lý Hóa Đơn
+          </h1>
+          <a
+            href="/admin/orders"
+            class="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+          >
+            ← Quản lý đơn hàng
+          </a>
+        </div>
 
-        <AdminOrderManager
-          initialOrders={data.orders as any}
+        <AdminInvoiceList
+          initialInvoices={data.invoices as any}
           initialPagination={data.pagination as any}
-          initialCarriers={data.carriers as any}
         />
       </main>
     </div>

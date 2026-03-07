@@ -37,6 +37,11 @@
         "docker run": true,
         "docker exec": true,
         "Test-Path": true,
-        "docker compose": true
+        "docker compose": true,
+        "docker rm": true,
+        "docker build": true,
+        "ForEach-Object": true,
+        "Start-Process": true,
+        "Get-Process": true
     }
 }

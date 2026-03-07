@@ -33,6 +33,7 @@ export default function AdminDashboard({ data }: PageProps<DashboardData>) {
           <div class="space-y-3">
             <a href="/admin/orders" class="block text-sm hover:underline">→ Quản lý đơn hàng</a>
             <a href="/admin/products" class="block text-sm hover:underline">→ Quản lý sản phẩm</a>
+            <a href="/admin/reports" class="block text-sm hover:underline">→ Báo cáo kinh doanh</a>
             <a href="/" class="block text-sm text-brand-gray hover:underline">← Về trang chủ</a>
           </div>
         </div>
@@ -61,7 +62,9 @@ function AdminLayout({ title, children }: { title: string; children: preact.Comp
             <nav class="hidden md:flex items-center gap-4 text-sm">
               <a href="/admin" class="hover:text-gray-300 transition-colors">Dashboard</a>
               <a href="/admin/orders" class="hover:text-gray-300 transition-colors">Đơn hàng</a>
+              <a href="/admin/invoices" class="hover:text-gray-300 transition-colors">Hóa đơn</a>
               <a href="/admin/products" class="hover:text-gray-300 transition-colors">Sản phẩm</a>
+              <a href="/admin/reports" class="hover:text-gray-300 transition-colors">Báo cáo</a>
             </nav>
           </div>
           <a href="/" class="text-sm text-gray-300 hover:text-white transition-colors">← Trang chủ</a>

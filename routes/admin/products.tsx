@@ -34,7 +34,9 @@ export default function AdminProductsPage({ data }: PageProps<ProductsData>) {
             <nav class="hidden md:flex items-center gap-4 text-sm">
               <a href="/admin" class="hover:text-gray-300 transition-colors">Dashboard</a>
               <a href="/admin/orders" class="hover:text-gray-300 transition-colors">Đơn hàng</a>
+              <a href="/admin/invoices" class="hover:text-gray-300 transition-colors">Hóa đơn</a>
               <a href="/admin/products" class="text-white underline">Sản phẩm</a>
+              <a href="/admin/reports" class="hover:text-gray-300 transition-colors">Báo cáo</a>
             </nav>
           </div>
           <a href="/" class="text-sm text-gray-300 hover:text-white transition-colors">← Trang chủ</a>

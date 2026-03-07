@@ -1,7 +1,7 @@
 // routes/api/admin/orders/[id]/status.ts — PATCH update order status
 import { Handlers } from "$fresh/server.ts";
 import type { AppState } from "../../../../_middleware.ts";
-import { updateOrderStatus } from "../../../../../lib/services/order.service.ts";
+import { updateOrderStatus, OrderError } from "../../../../../lib/services/order.service.ts";
 import { UpdateOrderStatusSchema, formatZodError } from "../../../../../lib/validation.ts";
 
 export const handler: Handlers<unknown, AppState> = {
@@ -25,7 +25,11 @@ export const handler: Handlers<unknown, AppState> = {
         );
       }
 
-      const order = await updateOrderStatus(ctx.params.id, parsed.data.status);
+      const order = await updateOrderStatus(ctx.params.id, parsed.data.status, {
+        note: parsed.data.note,
+        actorId: ctx.state.user.id,
+        actorName: ctx.state.user.name || "Admin",
+      });
       if (!order) {
         return new Response(
           JSON.stringify({ error: "Order not found", code: "NOT_FOUND" }),
@@ -38,6 +42,12 @@ export const handler: Handlers<unknown, AppState> = {
         { headers: { "Content-Type": "application/json" } },
       );
     } catch (error) {
+      if (error instanceof OrderError) {
+        return new Response(
+          JSON.stringify({ error: error.message, code: error.code }),
+          { status: error.status, headers: { "Content-Type": "application/json" } },
+        );
+      }
       console.error("Update order status error:", error);
       return new Response(
         JSON.stringify({ error: "Internal server error", code: "INTERNAL_ERROR" }),

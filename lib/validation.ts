@@ -66,8 +66,26 @@ export const UpdateOrderStatusSchema = z.object({
     "confirmed",
     "shipping",
     "delivered",
+    "completed",
     "cancelled",
+    "returning",
+    "returned",
   ]),
+  note: z.string().max(500).optional(),
+});
+
+export const AssignCarrierSchema = z.object({
+  carrierId: z.string().uuid("Carrier ID không hợp lệ"),
+  trackingNumber: z.string().max(100).optional(),
+});
+
+export const CreateReturnSchema = z.object({
+  reason: z.string().min(1, "Vui lòng nhập lý do").max(500),
+  refundAmount: z.number().positive().optional(),
+});
+
+export const ResolveReturnSchema = z.object({
+  adminNote: z.string().max(500).optional(),
 });
 
 // ── Types from schemas ──
@@ -77,6 +95,9 @@ export type LoginInput = z.infer<typeof LoginSchema>;
 export type CreateOrderInput = z.infer<typeof CreateOrderSchema>;
 export type CreateReviewInput = z.infer<typeof CreateReviewSchema>;
 export type UpdateOrderStatusInput = z.infer<typeof UpdateOrderStatusSchema>;
+export type AssignCarrierInput = z.infer<typeof AssignCarrierSchema>;
+export type CreateReturnInput = z.infer<typeof CreateReturnSchema>;
+export type ResolveReturnInput = z.infer<typeof ResolveReturnSchema>;
 
 // ── Helper: format Zod errors ──
 
