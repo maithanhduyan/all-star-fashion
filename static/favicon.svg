@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Background -->
+  <rect width="32" height="32" rx="4" fill="#111111"/>
+  <!-- Star accent -->
+  <path d="M16 4l1.8 5.5H24l-5 3.6 1.9 5.9L16 15.4 11.1 19l1.9-5.9-5-3.6h6.2L16 4z" fill="#C9A96E" opacity="0.25"/>
+  <!-- Letter A -->
+  <text x="16" y="23" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="20" fill="#FAFAFA" letter-spacing="0">A</text>
+  <!-- Gold underline -->
+  <rect x="8" y="25" width="16" height="1.2" rx="0.6" fill="#C9A96E"/>
+</svg>

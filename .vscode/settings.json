@@ -1,0 +1,36 @@
+{
+    "workbench.iconTheme": "material-icon-theme",
+    "editor.formatOnSave": false,
+    "editor.tabSize": 4,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "files.encoding": "utf8",
+    "files.autoGuessEncoding": false,
+    "files.eol": "\n",
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "chat.agent.maxRequests": 500000,
+    "deno.enable": true,
+    "deno.lint": true,
+    "editor.defaultFormatter": "denoland.vscode-deno",
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+    "css.customData": [
+        ".vscode/tailwind.json"
+    ],
+    "chat.tools.terminal.autoApprove": {
+        "New-Item": true,
+        "deno": true
+    }
+}
