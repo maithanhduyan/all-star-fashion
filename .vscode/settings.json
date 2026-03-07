@@ -35,6 +35,8 @@
         "docker --version 2>$null": true,
         "docker-compose": true,
         "docker run": true,
-        "docker exec": true
+        "docker exec": true,
+        "Test-Path": true,
+        "docker compose": true
     }
 }

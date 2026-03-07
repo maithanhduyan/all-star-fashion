@@ -16,13 +16,20 @@ COPY . .
 # Cache all dependencies (including remote imports)
 RUN deno cache main.ts
 
+# Provide dummy env vars for the build step (Fresh asset compilation only)
+RUN cp .env.example .env
+
 # Build Fresh (generate static assets & pre-compile)
 RUN deno task build
+
+# Remove dummy env (real values injected at runtime via docker-compose)
+RUN rm .env
 
 # Create non-root user for security
 RUN addgroup --system --gid 1001 appuser && \
     adduser --system --uid 1001 --ingroup appuser appuser && \
-    chown -R appuser:appuser /app
+    chown -R appuser:appuser /app && \
+    chown -R appuser:appuser /deno-dir
 USER appuser
 
 EXPOSE 8000

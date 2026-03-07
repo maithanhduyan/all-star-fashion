@@ -1,13 +1,20 @@
-// db/client.ts — PostgreSQL connection pool
+// db/client.ts — PostgreSQL connection pool (lazy initialization)
 import { Pool } from "postgres";
 
-const pool = new Pool({
-  hostname: Deno.env.get("DATABASE_HOST") || "localhost",
-  port: Number(Deno.env.get("DATABASE_PORT")) || 5432,
-  database: Deno.env.get("DATABASE_NAME") || "allstar_fashion",
-  user: Deno.env.get("DATABASE_USER") || "allstar",
-  password: Deno.env.get("DATABASE_PASSWORD") || "",
-}, 10);
+let _pool: Pool | null = null;
+
+function getPool(): Pool {
+  if (!_pool) {
+    _pool = new Pool({
+      hostname: Deno.env.get("DATABASE_HOST") || "localhost",
+      port: Number(Deno.env.get("DATABASE_PORT")) || 5432,
+      database: Deno.env.get("DATABASE_NAME") || "allstar_fashion",
+      user: Deno.env.get("DATABASE_USER") || "allstar",
+      password: Deno.env.get("DATABASE_PASSWORD") || "",
+    }, 10);
+  }
+  return _pool;
+}
 
 /**
  * Execute a query with automatic connection management.
@@ -17,7 +24,7 @@ export async function query<T>(
   sql: string,
   args: unknown[] = [],
 ): Promise<T[]> {
-  const client = await pool.connect();
+  const client = await getPool().connect();
   try {
     const result = await client.queryObject<T>(sql, args);
     return result.rows;
@@ -44,7 +51,7 @@ export async function execute(
   sql: string,
   args: unknown[] = [],
 ): Promise<number> {
-  const client = await pool.connect();
+  const client = await getPool().connect();
   try {
     const result = await client.queryObject(sql, args);
     return result.rowCount ?? 0;
@@ -60,7 +67,7 @@ export async function execute(
 export async function transaction<T>(
   fn: (client: TransactionClient) => Promise<T>,
 ): Promise<T> {
-  const client = await pool.connect();
+  const client = await getPool().connect();
   try {
     await client.queryObject("BEGIN");
     const txClient: TransactionClient = {
@@ -99,7 +106,17 @@ export interface TransactionClient {
 
 /** Close the pool (for graceful shutdown) */
 export async function closePool(): Promise<void> {
-  await pool.end();
+  if (_pool) {
+    await _pool.end();
+    _pool = null;
+  }
 }
 
-export { pool };
+/** Get the pool instance (lazily initialized) */
+export const pool = {
+  connect: () => getPool().connect(),
+  end: () => {
+    if (_pool) return _pool.end();
+    return Promise.resolve();
+  },
+};
