@@ -29,22 +29,25 @@ function getPool(): Pool {
     const pgHost = Deno.env.get("PGHOST") || Deno.env.get("DATABASE_HOST");
 
     if (databaseUrl) {
-      // Railway / cloud providers inject DATABASE_URL
-      // lazy=true: connections created on demand, not all at once
-      _pool = new Pool(parseDbUrl(databaseUrl), 10, true);
+      const opts = parseDbUrl(databaseUrl);
+      console.log(`[DB] Connecting via DATABASE_URL → ${opts.hostname}:${opts.port}/${opts.database}`);
+      _pool = new Pool(opts, 10, true);
     } else if (pgHost) {
-      // Railway individual vars (PGHOST, PGPORT, etc.)
+      const port = Number(Deno.env.get("PGPORT") || Deno.env.get("DATABASE_PORT")) || 5432;
+      const database = Deno.env.get("PGDATABASE") || Deno.env.get("DATABASE_NAME") || "allstar_fashion";
+      console.log(`[DB] Connecting via PGHOST → ${pgHost}:${port}/${database}`);
       _pool = new Pool({
         hostname: pgHost,
-        port: Number(Deno.env.get("PGPORT") || Deno.env.get("DATABASE_PORT")) || 5432,
-        database: Deno.env.get("PGDATABASE") || Deno.env.get("DATABASE_NAME") || "allstar_fashion",
+        port,
+        database,
         user: Deno.env.get("PGUSER") || Deno.env.get("DATABASE_USER") || "allstar",
         password: Deno.env.get("PGPASSWORD") || Deno.env.get("DATABASE_PASSWORD") || "",
         tls: { enabled: true, enforce: false },
       }, 10, true);
     } else {
-      // Fallback: local dev / docker-compose
       const sslEnabled = Deno.env.get("DATABASE_SSL") === "true";
+      console.warn(`[DB] ⚠️  No DATABASE_URL or PGHOST found! Falling back to localhost.`);
+      console.warn(`[DB] On Railway: set DATABASE_URL = $\{\{Postgres.DATABASE_URL\}\} in app service variables.`);
       _pool = new Pool({
         hostname: "localhost",
         port: Number(Deno.env.get("DATABASE_PORT")) || 5432,
