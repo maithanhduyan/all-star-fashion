@@ -1,26 +1,21 @@
-import { useState, useRef } from "preact/hooks";
+import { useState } from "preact/hooks";
 
 export default function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
     setSubmitting(true);
     setError("");
 
-    const fd = new FormData(formRef.current!);
-    const body = {
-      email: fd.get("email") as string,
-      password: fd.get("password") as string,
-    };
-
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
@@ -42,7 +37,7 @@ export default function LoginForm() {
   };
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} class="space-y-6">
+    <form onSubmit={handleSubmit} class="space-y-6">
       {error && (
         <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">
           {error}
@@ -55,6 +50,8 @@ export default function LoginForm() {
           type="email"
           name="email"
           required
+          value={email}
+          onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
           class="w-full border border-brand-light-gray px-4 py-3 text-sm focus:outline-none focus:border-brand-black transition-colors"
           placeholder="email@example.com"
         />
@@ -67,6 +64,8 @@ export default function LoginForm() {
           name="password"
           required
           minLength={8}
+          value={password}
+          onInput={(e) => setPassword((e.target as HTMLInputElement).value)}
           class="w-full border border-brand-light-gray px-4 py-3 text-sm focus:outline-none focus:border-brand-black transition-colors"
           placeholder="••••••••"
         />

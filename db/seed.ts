@@ -95,7 +95,7 @@ async function seed(): Promise<void> {
     await client.queryObject(
       `INSERT INTO users (email, password_hash, name, role)
        VALUES ($1, $2, $3, $4)
-       ON CONFLICT (email) DO NOTHING`,
+       ON CONFLICT (email) DO UPDATE SET password_hash = $2`,
       [adminEmail, passwordHash, "Admin", "admin"],
     );
     console.log(`  ✅ Admin user created (${adminEmail})`);
