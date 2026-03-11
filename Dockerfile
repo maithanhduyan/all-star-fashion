@@ -34,8 +34,8 @@ USER appuser
 
 EXPOSE 8000
 
-# Health check
+# Health check (uses PORT env var with fallback to 8000 for Railway compatibility)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD ["deno", "eval", "const r = await fetch('http://localhost:8000'); if(r.status !== 200) Deno.exit(1);"]
+  CMD ["deno", "eval", "const p = Deno.env.get('PORT') || '8000'; const r = await fetch(`http://localhost:${p}`); if(r.status !== 200) Deno.exit(1);"]
 
 CMD ["deno", "run", "-A", "main.ts"]

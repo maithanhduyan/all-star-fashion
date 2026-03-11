@@ -1,0 +1,15 @@
+# ============================================
+# All Star Fashion — Railway Configuration
+# ============================================
+
+[build]
+# Railway tự detect Dockerfile
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Railway inject PORT env var → app phải listen trên port này
+startCommand = "deno run -A main.ts"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3

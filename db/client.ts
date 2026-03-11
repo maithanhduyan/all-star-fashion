@@ -3,17 +3,44 @@ import { Pool } from "postgres";
 
 let _pool: Pool | null = null;
 
+/**
+ * Parse DATABASE_URL into connection options.
+ * Supports: postgres://user:password@host:port/database?sslmode=require
+ */
+function parseDbUrl(url: string) {
+  const parsed = new URL(url);
+  return {
+    hostname: parsed.hostname,
+    port: Number(parsed.port) || 5432,
+    database: parsed.pathname.slice(1),
+    user: decodeURIComponent(parsed.username),
+    password: decodeURIComponent(parsed.password),
+    tls: {
+      enabled: parsed.searchParams.get("sslmode") !== "disable",
+      enforce: false,
+    },
+  };
+}
+
 function getPool(): Pool {
   if (!_pool) {
-    const sslEnabled = Deno.env.get("DATABASE_SSL") === "true";
-    _pool = new Pool({
-      hostname: Deno.env.get("DATABASE_HOST") || "localhost",
-      port: Number(Deno.env.get("DATABASE_PORT")) || 5432,
-      database: Deno.env.get("DATABASE_NAME") || "allstar_fashion",
-      user: Deno.env.get("DATABASE_USER") || "allstar",
-      password: Deno.env.get("DATABASE_PASSWORD") || "",
-      tls: { enabled: sslEnabled, enforce: false },
-    }, 10);
+    const databaseUrl = Deno.env.get("DATABASE_URL");
+
+    if (databaseUrl) {
+      // Railway / cloud providers inject DATABASE_URL
+      _pool = new Pool(parseDbUrl(databaseUrl), 10);
+    } else {
+      // Fallback: individual env vars (docker-compose, local dev)
+      const sslEnabled = Deno.env.get("DATABASE_SSL") === "true";
+      _pool = new Pool({
+        hostname: Deno.env.get("DATABASE_HOST") || "localhost",
+        port: Number(Deno.env.get("DATABASE_PORT")) || 5432,
+        database: Deno.env.get("DATABASE_NAME") || "allstar_fashion",
+        user: Deno.env.get("DATABASE_USER") || "allstar",
+        password: Deno.env.get("DATABASE_PASSWORD") || "",
+        tls: { enabled: sslEnabled, enforce: false },
+      }, 10);
+    }
   }
   return _pool;
 }
