@@ -1,8 +1,9 @@
 import { type PageProps } from "$fresh/server.ts";
 import type { AppState } from "./_middleware.ts";
 
-export default function App({ Component, state }: PageProps<unknown, AppState>) {
+export default function App({ Component, state, url }: PageProps<unknown, AppState>) {
   const user = state?.user ?? null;
+  const origin = url.origin;
   return (
     <html lang="vi">
       <head>
@@ -20,11 +21,15 @@ export default function App({ Component, state }: PageProps<unknown, AppState>) 
         <meta property="og:type" content="website" />
         <meta property="og:title" content="All Star Fashion - Thời Trang Cao Cấp" />
         <meta property="og:description" content="Thời trang cao cấp cho người Việt hiện đại. Chất lượng, phong cách, và sự tinh tế trong từng sản phẩm." />
-        <meta property="og:image" content="/logo.svg" />
+        <meta property="og:image" content={`${origin}/images/og-image.png`} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content={`${origin}/`} />
         <meta property="og:site_name" content="All Star Fashion" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="All Star Fashion - Thời Trang Cao Cấp" />
         <meta name="twitter:description" content="Thời trang cao cấp cho người Việt hiện đại." />
+        <meta name="twitter:image" content={`${origin}/images/og-image.png`} />
         <meta name="theme-color" content="#111111" />
         <meta name="view-transition" content="same-origin" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
