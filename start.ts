@@ -51,13 +51,18 @@ async function autoInit(): Promise<boolean> {
     return false;
   }
 
-  // Step 2: Run migrations
+  // Step 2: Run schema migrations (0001-0004 create tables)
   const { runMigrations } = await import("./db/migrate.ts");
   await runMigrations();
 
-  // Step 3: Seed data (idempotent — uses ON CONFLICT DO NOTHING)
+  // Step 3: Seed core data (categories, products, admin user)
+  // Must run BEFORE demo data migration (0005) which references products by slug
   const { seed } = await import("./db/seed.ts");
   await seed();
+
+  // Step 4: Run remaining migrations (0005+ demo data that depends on seeded products)
+  // runMigrations is idempotent — skips already-applied migrations
+  await runMigrations();
 
   console.log("\n✅ Initialization complete.\n");
   return true;

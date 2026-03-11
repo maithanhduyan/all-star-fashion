@@ -27,7 +27,8 @@ async function getAppliedMigrations(
   return new Set(result.rows.map((r) => r.name));
 }
 
-async function runMigrations(): Promise<void> {
+async function runMigrations(options?: { stopOnError?: boolean }): Promise<void> {
+  const stopOnError = options?.stopOnError ?? false;
   console.log("🔄 Running migrations...\n");
 
   const client = await pool.connect();
@@ -68,7 +69,9 @@ async function runMigrations(): Promise<void> {
       } catch (error) {
         await client.queryObject("ROLLBACK");
         console.error(`  ❌ ${filename} failed:`, error);
-        throw error;
+        if (stopOnError) throw error;
+        // Continue with next migration — will retry on next startup
+        continue;
       }
     }
 
@@ -79,7 +82,6 @@ async function runMigrations(): Promise<void> {
     }
   } finally {
     client.release();
-    await pool.end();
   }
 }
 
@@ -87,5 +89,6 @@ export { runMigrations };
 
 // Run standalone: deno run -A db/migrate.ts
 if (import.meta.main) {
-  await runMigrations();
+  await runMigrations({ stopOnError: true });
+  await pool.end();
 }

@@ -118,7 +118,6 @@ async function seed(): Promise<void> {
     console.log("\n✅ Seed completed successfully!");
   } finally {
     client.release();
-    await pool.end();
   }
 }
 
@@ -127,4 +126,5 @@ export { seed };
 // Run standalone: deno run -A db/seed.ts
 if (import.meta.main) {
   await seed();
+  await pool.end();
 }
