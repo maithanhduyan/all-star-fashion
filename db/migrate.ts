@@ -83,5 +83,9 @@ async function runMigrations(): Promise<void> {
   }
 }
 
-// Run
-await runMigrations();
+export { runMigrations };
+
+// Run standalone: deno run -A db/migrate.ts
+if (import.meta.main) {
+  await runMigrations();
+}

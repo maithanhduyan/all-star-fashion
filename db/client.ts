@@ -25,21 +25,34 @@ function parseDbUrl(url: string) {
 function getPool(): Pool {
   if (!_pool) {
     const databaseUrl = Deno.env.get("DATABASE_URL");
+    // Railway also exposes individual PG* vars from the PostgreSQL plugin
+    const pgHost = Deno.env.get("PGHOST") || Deno.env.get("DATABASE_HOST");
 
     if (databaseUrl) {
       // Railway / cloud providers inject DATABASE_URL
-      _pool = new Pool(parseDbUrl(databaseUrl), 10);
+      // lazy=true: connections created on demand, not all at once
+      _pool = new Pool(parseDbUrl(databaseUrl), 10, true);
+    } else if (pgHost) {
+      // Railway individual vars (PGHOST, PGPORT, etc.)
+      _pool = new Pool({
+        hostname: pgHost,
+        port: Number(Deno.env.get("PGPORT") || Deno.env.get("DATABASE_PORT")) || 5432,
+        database: Deno.env.get("PGDATABASE") || Deno.env.get("DATABASE_NAME") || "allstar_fashion",
+        user: Deno.env.get("PGUSER") || Deno.env.get("DATABASE_USER") || "allstar",
+        password: Deno.env.get("PGPASSWORD") || Deno.env.get("DATABASE_PASSWORD") || "",
+        tls: { enabled: true, enforce: false },
+      }, 10, true);
     } else {
-      // Fallback: individual env vars (docker-compose, local dev)
+      // Fallback: local dev / docker-compose
       const sslEnabled = Deno.env.get("DATABASE_SSL") === "true";
       _pool = new Pool({
-        hostname: Deno.env.get("DATABASE_HOST") || "localhost",
+        hostname: "localhost",
         port: Number(Deno.env.get("DATABASE_PORT")) || 5432,
         database: Deno.env.get("DATABASE_NAME") || "allstar_fashion",
         user: Deno.env.get("DATABASE_USER") || "allstar",
         password: Deno.env.get("DATABASE_PASSWORD") || "",
         tls: { enabled: sslEnabled, enforce: false },
-      }, 10);
+      }, 10, true);
     }
   }
   return _pool;

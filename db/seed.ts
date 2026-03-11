@@ -122,4 +122,9 @@ async function seed(): Promise<void> {
   }
 }
 
-await seed();
+export { seed };
+
+// Run standalone: deno run -A db/seed.ts
+if (import.meta.main) {
+  await seed();
+}

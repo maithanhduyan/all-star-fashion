@@ -14,7 +14,7 @@ COPY deno.json deno.lock* ./
 COPY . .
 
 # Cache all dependencies (including remote imports)
-RUN deno cache main.ts
+RUN deno cache main.ts start.ts
 
 # Provide dummy env vars for the build step (Fresh asset compilation only)
 RUN cp .env.example .env
@@ -38,4 +38,6 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD ["deno", "eval", "const p = Deno.env.get('PORT') || '8000'; const r = await fetch(`http://localhost:${p}`); if(r.status !== 200) Deno.exit(1);"]
 
-CMD ["deno", "run", "-A", "main.ts"]
+# Default: start with auto-init (migrate + seed + serve)
+# Override with main.ts for skip-init mode
+CMD ["deno", "run", "-A", "start.ts"]

@@ -7,8 +7,8 @@
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Railway inject PORT env var → app phải listen trên port này
-startCommand = "deno run -A main.ts"
+# start.ts = auto migrate + seed + serve (one-click ready)
+startCommand = "deno run -A start.ts"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
