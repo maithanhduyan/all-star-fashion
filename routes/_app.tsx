@@ -3,7 +3,9 @@ import type { AppState } from "./_middleware.ts";
 
 export default function App({ Component, state, url }: PageProps<unknown, AppState>) {
   const user = state?.user ?? null;
-  const origin = url.origin;
+  const origin = url.protocol === "http:" && url.hostname !== "localhost"
+    ? `https://${url.host}`
+    : url.origin;
   return (
     <html lang="vi">
       <head>
