@@ -90,7 +90,7 @@ async function seed(): Promise<void> {
     console.log("  👤 Seeding admin user...");
     const adminEmail = Deno.env.get("ADMIN_EMAIL") || "admin@allstarfashion.vn";
     const adminPassword = Deno.env.get("ADMIN_PASSWORD") || "admin12345678";
-    const passwordHash = await hash(adminPassword);
+    const passwordHash = await hash(adminPassword, 10);
 
     await client.queryObject(
       `INSERT INTO users (email, password_hash, name, role)

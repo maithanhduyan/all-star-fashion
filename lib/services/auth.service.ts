@@ -51,7 +51,7 @@ export async function register(input: {
   }
 
   // Hash password
-  const passwordHash = await hash(input.password);
+  const passwordHash = await hash(input.password, 10);
 
   // Insert user
   const user = await queryOne<UserRow>(
@@ -242,7 +242,7 @@ export async function changePassword(
   const valid = await compare(currentPassword, user.password_hash);
   if (!valid) throw new AuthError("Mật khẩu hiện tại không đúng", "WRONG_PASSWORD", 400);
 
-  const newHash = await hash(newPassword);
+  const newHash = await hash(newPassword, 10);
   await execute("UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2", [newHash, userId]);
 }
 
