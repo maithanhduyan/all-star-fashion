@@ -22,8 +22,8 @@ RUN cp .env.example .env
 # Build Fresh (generate static assets & pre-compile)
 RUN deno task build
 
-# Remove dummy env (real values injected at runtime via docker-compose)
-RUN rm .env
+# Remove dummy env AND .env.example (prevent dotenv loading stale values in production)
+RUN rm -f .env .env.example .env.production.example
 
 # Create non-root user for security
 RUN addgroup --system --gid 1001 appuser && \

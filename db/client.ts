@@ -24,38 +24,37 @@ function parseDbUrl(url: string) {
 
 function getPool(): Pool {
   if (!_pool) {
-    const databaseUrl = Deno.env.get("DATABASE_URL");
-    // Railway also exposes individual PG* vars from the PostgreSQL plugin
-    const pgHost = Deno.env.get("PGHOST") || Deno.env.get("DATABASE_HOST");
+    // Railway provides DATABASE_PRIVATE_URL for internal service-to-service networking
+    const databaseUrl = Deno.env.get("DATABASE_PRIVATE_URL")
+      || Deno.env.get("DATABASE_URL");
+    const isRailway = !!Deno.env.get("RAILWAY_ENVIRONMENT");
 
     if (databaseUrl) {
       const opts = parseDbUrl(databaseUrl);
       console.log(`[DB] Connecting via DATABASE_URL → ${opts.hostname}:${opts.port}/${opts.database}`);
       _pool = new Pool(opts, 10, true);
-    } else if (pgHost) {
+    } else if (!isRailway) {
+      // Local dev / docker-compose: use individual env vars
+      const pgHost = Deno.env.get("PGHOST") || Deno.env.get("DATABASE_HOST") || "localhost";
+      const sslEnabled = Deno.env.get("DATABASE_SSL") === "true";
       const port = Number(Deno.env.get("PGPORT") || Deno.env.get("DATABASE_PORT")) || 5432;
       const database = Deno.env.get("PGDATABASE") || Deno.env.get("DATABASE_NAME") || "allstar_fashion";
-      console.log(`[DB] Connecting via PGHOST → ${pgHost}:${port}/${database}`);
+      console.log(`[DB] Connecting → ${pgHost}:${port}/${database}`);
       _pool = new Pool({
         hostname: pgHost,
         port,
         database,
         user: Deno.env.get("PGUSER") || Deno.env.get("DATABASE_USER") || "allstar",
         password: Deno.env.get("PGPASSWORD") || Deno.env.get("DATABASE_PASSWORD") || "",
-        tls: { enabled: true, enforce: false },
-      }, 10, true);
-    } else {
-      const sslEnabled = Deno.env.get("DATABASE_SSL") === "true";
-      console.warn(`[DB] ⚠️  No DATABASE_URL or PGHOST found! Falling back to localhost.`);
-      console.warn(`[DB] On Railway: set DATABASE_URL = $\{\{Postgres.DATABASE_URL\}\} in app service variables.`);
-      _pool = new Pool({
-        hostname: "localhost",
-        port: Number(Deno.env.get("DATABASE_PORT")) || 5432,
-        database: Deno.env.get("DATABASE_NAME") || "allstar_fashion",
-        user: Deno.env.get("DATABASE_USER") || "allstar",
-        password: Deno.env.get("DATABASE_PASSWORD") || "",
         tls: { enabled: sslEnabled, enforce: false },
       }, 10, true);
+    } else {
+      // On Railway but no DATABASE_URL — print clear instructions
+      console.error(`[DB] ❌ Running on Railway but DATABASE_URL is not set!`);
+      console.error(`[DB] 👉 Go to Railway Dashboard → your app service → Variables → Add:`);
+      console.error(`[DB]    DATABASE_URL = $\{\{Postgres.DATABASE_URL\}\}`);
+      console.error(`[DB]    (Replace 'Postgres' with your PostgreSQL service name)`);
+      throw new Error("DATABASE_URL is required on Railway. See logs above for instructions.");
     }
   }
   return _pool;
