@@ -4,7 +4,7 @@
 
 ## One-Click Deploy to Railway
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template?referralCode=allstarfashion)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/lAcp8_?referralCode=porbFd&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 ### Chỉ cần 3 bước:
 
